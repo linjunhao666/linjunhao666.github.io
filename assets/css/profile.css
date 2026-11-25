@@ -1,0 +1,88 @@
+
+.wrapper { position: relative; }
+.language-control { position: absolute; inset: 1rem 0 auto auto; z-index: 1; }
+#language-toggle {
+  min-height: 24px; padding: 2px 4px; border: 0;
+  background: transparent; color: #043361;
+  font: inherit; font-size: 0.8125rem; line-height: 1.25; cursor: pointer;
+}
+#language-toggle:hover { text-decoration: underline; }
+#language-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+@media (prefers-color-scheme: dark) { #language-toggle { color: #3eb7f0; } }
+@media screen and (max-width: 960px) { .language-control { top: 0; } }
+
+.image.avatar img {
+  display: block;
+  width: 112px;
+  height: 112px;
+  padding: 0;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.profile-links a, .profile-links button {
+  margin: 0 0.125rem;
+}
+.profile-links button {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #043361;
+  font: inherit;
+  font-size: 1.15rem;
+  line-height: 2.5rem;
+  cursor: pointer;
+}
+.profile-links button:enabled:hover { transform: scale(1.2); }
+@media (prefers-color-scheme: dark) { .profile-links button { color: #3eb7f0; } }
+.profile-contact {
+  margin: 0 0 0.5rem;
+  font-style: normal;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.profile-nav {
+  max-width: 200px;
+  margin: 1.3rem auto 1rem;
+  text-align: left;
+}
+.profile-nav h2 {
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(64, 109, 155, 0.28);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.profile-nav a {
+  display: block;
+  margin: 0.2rem 0;
+  padding: 0.3rem 0.65rem;
+  border-left: 2px solid transparent;
+  border-radius: 0 4px 4px 0;
+  color: inherit;
+}
+.profile-nav a:hover,
+.profile-nav a[aria-current="page"] {
+  background: rgba(64, 109, 155, 0.10);
+}
+.profile-nav a[aria-current="page"] {
+  border-left-color: currentColor;
+  font-weight: 600;
+}
+@media screen and (min-width: 961px) {
+  header { box-sizing: border-box; max-height: 100vh; overflow-y: auto; }
+}
+
+.profile-links .cv-placeholder {
+  opacity: 0.6;
+  font-weight: 600;
+  cursor: default;
+}

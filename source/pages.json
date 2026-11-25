@@ -1,0 +1,32 @@
+[
+  {
+    "id": "about",
+    "file": "index",
+    "en": "About Me",
+    "zh": "关于我"
+  },
+  {
+    "id": "awards",
+    "file": "awards",
+    "en": "Awards",
+    "zh": "获奖荣誉"
+  },
+  {
+    "id": "projects",
+    "file": "projects",
+    "en": "Projects",
+    "zh": "项目"
+  },
+  {
+    "id": "events",
+    "file": "events",
+    "en": "Events",
+    "zh": "活动"
+  },
+  {
+    "id": "thoughts",
+    "file": "thoughts",
+    "en": "Thoughts",
+    "zh": "随想"
+  }
+]

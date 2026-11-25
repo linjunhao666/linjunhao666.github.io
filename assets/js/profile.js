@@ -1,26 +1,43 @@
-
 const languageToggle = document.getElementById('language-toggle');
-const translatedElements = root => [...root.querySelectorAll('[data-zh]')].map(element => ({
-  element,
-  english: element.textContent,
-  chinese: element.dataset.zh,
-}));
-let translations = translatedElements(document);
+const nav = document.querySelector('.profile-nav');
+const content = document.getElementById('page-content');
+const englishText = new WeakMap();
+const canFetchPages = location.protocol === 'https:' || location.protocol === 'http:';
+
+function isChinese(url) {
+  return url.searchParams.get('lang') === 'zh';
+}
+
+function setUrlLanguage(url, showChinese) {
+  if (showChinese) url.searchParams.set('lang', 'zh');
+  else url.searchParams.delete('lang');
+}
+
 function showLanguage(showChinese) {
-  for (const {element, english, chinese} of translations) {
-    element.textContent = showChinese ? chinese : english;
+  for (const element of document.querySelectorAll('[data-zh]')) {
+    if (!englishText.has(element)) englishText.set(element, element.textContent);
+    element.textContent = showChinese ? element.dataset.zh : englishText.get(element);
   }
   document.documentElement.lang = showChinese ? 'zh-CN' : 'en-US';
   languageToggle.lang = showChinese ? 'en' : 'zh-CN';
   languageToggle.textContent = showChinese ? 'English' : '中文';
+
   for (const link of document.querySelectorAll('a[data-page]')) {
-    const path = link.getAttribute('href').split('?')[0];
-    link.setAttribute('href', showChinese ? path + '?lang=zh' : path);
+    const url = new URL(link.href);
+    setUrlLanguage(url, showChinese);
+    link.href = url.href;
   }
 }
-showLanguage(new URLSearchParams(location.search).get('lang') === 'zh');
+
+showLanguage(isChinese(new URL(location.href)));
 languageToggle.addEventListener('click', () => {
-  showLanguage(document.documentElement.lang !== 'zh-CN');
+  const showChinese = document.documentElement.lang !== 'zh-CN';
+  showLanguage(showChinese);
+  if (canFetchPages) {
+    const url = new URL(location.href);
+    setUrlLanguage(url, showChinese);
+    history.replaceState(history.state, '', url);
+  }
 });
 languageToggle.hidden = false;
 
@@ -32,48 +49,46 @@ wechatToggle.addEventListener('click', () => {
 });
 wechatToggle.hidden = false;
 
-// Keep the profile and navigation mounted while switching the content panel.
-if (location.protocol === 'https:' || location.protocol === 'http:') {
-  const nav = document.querySelector('.profile-nav');
-  const content = document.querySelector('.wrapper > section');
+// On HTTP, keep the sidebar mounted and replace only the page content.
+if (canFetchPages) {
   let pendingNavigation;
 
   async function loadPage(url, addHistory) {
     pendingNavigation?.abort();
     const request = new AbortController();
     pendingNavigation = request;
+    content.setAttribute('aria-busy', 'true');
     try {
       const response = await fetch(url, { signal: request.signal });
       if (!response.ok) throw new Error('Page unavailable');
       const page = new DOMParser().parseFromString(await response.text(), 'text/html');
       if (request.signal.aborted) return;
 
-      const nextContent = page.querySelector('.wrapper > section');
-      const nextTitle = page.querySelector('title');
+      const nextContent = page.getElementById('page-content');
+      const nextTitle = page.querySelector('title[data-zh]');
       const activePage = page.querySelector('.profile-nav [aria-current="page"]')?.dataset.page;
       if (!nextContent || !nextTitle || !activePage) throw new Error('Page incomplete');
 
-      content.replaceChildren(...nextContent.childNodes);
-      const title = document.querySelector('title');
-      title.replaceWith(nextTitle);
-      translations = translations.filter(({element}) => element.isConnected);
-      translations.push(...translatedElements(content), {
-        element: nextTitle,
-        english: nextTitle.textContent,
-        chinese: nextTitle.dataset.zh,
-      });
+      // A language switch while the fetch is in flight applies to the destination too.
+      if (addHistory) setUrlLanguage(url, document.documentElement.lang === 'zh-CN');
 
+      content.replaceChildren(...nextContent.childNodes);
+      document.querySelector('title').replaceWith(nextTitle);
+      nav.querySelector('[aria-current="page"]')?.removeAttribute('aria-current');
       for (const link of nav.querySelectorAll('a[data-page]')) {
         if (link.dataset.page === activePage) link.setAttribute('aria-current', 'page');
-        else link.removeAttribute('aria-current');
       }
-
-      showLanguage(url.searchParams.get('lang') === 'zh');
+      showLanguage(isChinese(url));
       if (addHistory && url.href !== location.href) history.pushState(null, '', url);
     } catch (error) {
       if (request.signal.aborted) return;
       if (addHistory) location.assign(url);
       else location.reload();
+    } finally {
+      if (pendingNavigation === request) {
+        pendingNavigation = null;
+        content.removeAttribute('aria-busy');
+      }
     }
   }
 

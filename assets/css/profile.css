@@ -86,3 +86,19 @@
   font-weight: 600;
   cursor: default;
 }
+
+.contribution-calendar {
+  box-sizing: border-box;
+  overflow-x: auto;
+  padding: 0.65rem;
+  border: 1px solid rgba(64, 109, 155, 0.28);
+  border-radius: 6px;
+  background: #fff;
+}
+.contribution-calendar img {
+  display: block;
+  width: 100%;
+  min-width: 31rem;
+  max-width: none;
+  height: auto;
+}

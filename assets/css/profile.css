@@ -1,3 +1,4 @@
+html { scrollbar-gutter: stable; }
 
 .wrapper { position: relative; }
 .language-control { position: absolute; inset: 1rem 0 auto auto; z-index: 1; }
@@ -51,6 +52,7 @@
   max-width: 200px;
   margin: 1.3rem auto 1rem;
   text-align: left;
+  line-height: 1.5rem;
 }
 .profile-nav h2 {
   margin: 0 0 0.5rem;
@@ -75,7 +77,6 @@
 }
 .profile-nav a[aria-current="page"] {
   border-left-color: currentColor;
-  font-weight: 600;
 }
 @media screen and (min-width: 961px) {
   header { box-sizing: border-box; max-height: 100vh; overflow-y: auto; }
